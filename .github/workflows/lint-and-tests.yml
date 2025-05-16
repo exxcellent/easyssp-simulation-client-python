@@ -1,0 +1,58 @@
+name: Run Ruff and Mypy Checks and Tests
+
+on:
+  push:
+    branches:
+      - '**' # Triggers on all branches but not tag push
+  pull_request:  # Triggers on all PRs
+
+jobs:
+  lint:
+    name: Run Ruff and Mypy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv sync --group lint
+
+      - name: Run Ruff
+        run: |
+          uv run --frozen python -m ruff check
+
+      - name: Run Mypy
+        run: |
+          uv run --frozen python -m mypy
+
+  test:
+    runs-on: ubuntu-latest
+    needs: ['lint']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install uv
+          uv sync
+          uv sync --group test
+
+      - name: Run Tests
+        run: |
+          uv run --frozen python -m pytest

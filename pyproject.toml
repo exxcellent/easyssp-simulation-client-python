@@ -1,0 +1,159 @@
+[project]
+name = "easyssp-simulation-client"
+version = "1.0.0"
+description = "A Python client for simulating System Structure and Parameterization (SSP) models with integrated Functional Mock-up Interface (FMI) components in easySSP."
+repository = "https://github.com/exxcellent/easyssp-simulation-client-python"
+keywords = ["easySSP", "python", "client", "simulation"]
+authors = [
+    { name = "easySSP Dev Team", email = "easyssp-dev@exxcellent.de" }
+]
+license = { text = "MIT" }
+license-files = ["LICENSE"]
+readme = "README-pypi.md"
+requires-python = ">=3.11"
+dependencies = [
+    "easyssp-utils>=1.0.0",
+    "pydantic>=2.11.3",
+]
+classifiers = [
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://www.easy-ssp.com"
+"Release Changelog" = "https://github.com/exxcellent/easyssp-simulation-client-python/releases"
+Source = "https://github.com/exxcellent/easyssp-simulation-client-python"
+
+[dependency-groups]
+test = [
+    "pytest>=8.3.5",
+]
+lint = [
+    "mypy>=1.15.0",
+    "ruff>=0.11.0",
+]
+
+[tool.uv]
+default-groups = ["test", "lint"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "easyssp_simulation/*",
+]
+exclude = [
+]
+
+[tool.hatch.build.targets.wheel]
+include = [
+    "easyssp_simulation/*",
+]
+exclude = [
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+files = ['easyssp_simulation']
+disallow_any_unimported = true
+no_implicit_optional = true
+check_untyped_defs = true
+warn_unused_ignores = true
+show_error_codes = true
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+fix = true
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "B",
+    "C",
+    "E",
+    "F",
+    "G",
+    "I",
+    "N",
+    "Q",
+    "S",
+    "T",
+    "W",
+    "ANN",
+    "ARG",
+    "BLE",
+    "COM",
+    "DJ",
+    "DTZ",
+    "EM",
+    "ERA",
+    "EXE",
+    "FBT",
+    "ICN",
+    "INP",
+    "ISC",
+    "NPY",
+    "PD",
+    "PGH",
+    "PIE",
+    "PL",
+    "PT",
+    "PTH",
+    "PYI",
+    "RET",
+    "RSE",
+    "RUF",
+    "SIM",
+    "SLF",
+    "TID",
+    "TRY",
+    "UP",
+    "YTT",
+]
+ignore = [
+    "ANN", # Type hints related, let mypy handle these.
+    "COM812", # "Trailing comma missing". If black is happy, I'm happy.
+    "E501", # "Line too long". If black is happy, I'm happy.
+    "EM101", # "Exception must not use a string literal, assign to variable first"
+    "EM102", # "Exception must not use an f-string literal, assign to variable first"
+    "PTH", # User Pathlib stuff over os.*. Should migrate to Pathlib at some point.
+    "RET504", # "Unnecessary variable assignment before `return` statement"
+    "S101", # "Use of `assert` detected"
+    "SIM108", # "Use ternary operator ...". Ternary is harmful for readability in some cases.
+    "TRY003", # "Avoid specifying long messages outside the exception class"
+    "PLR0913", # Many langchain calls need more than 5 args, so this is impractical
+    "INP001", # not really an issue, __int__ is old news anyway
+    "EXE001", # code is executed on AWS, we don't need the exec bit
+    "ERA001", # comments are okay
+    "S108", # temp files on AWS are okay
+    "T201", # print() is love, print() is life
+    "FBT001", # come on now, booleans aren't allowed in functions as positional args?
+    "FBT002", # more of the same
+    "FBT003", # more of the same
+    "ARG001", # allow unaccessed args, we're still in dev phase
+    "G004", # allow logging with f strings
+    "ISC001",
+    "N805", # First argument of a method should be named `self`
+]
+
+# Enable isort-compatible import formatting
+# Organizes imports alphabetically and categorically (stdlib, third-party, local)
+[tool.ruff.lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
+
+
+# Avoid redundant noqa comments for non-existent violations
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "S106", "S603", "B017", "PT011", "PLR2004"]
+
